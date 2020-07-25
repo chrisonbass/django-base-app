@@ -16,7 +16,7 @@ services:
   django:
     container_name: django
     # image: python:3.8.5
-    build: './django-build'
+    build: './docker/django'
     restart: always
     command: [ "/bin/bash", "-c", "--", "while true; do sleep 30; done;" ]
     volumes:
