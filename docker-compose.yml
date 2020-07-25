@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+  gateway:
+    container_name: gateway
+    image: nginx:latest
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - ./vol/gateway/confs:/etc/nginx/conf.d
+      - ./vol/front-end/dist:/www/data
+    depends_on:
+      - front-end
+
+  django:
+    container_name: django
+    # image: python:3.8.5
+    build: './django-build'
+    restart: always
+    command: [ "/bin/bash", "-c", "--", "while true; do sleep 30; done;" ]
+    volumes:
+      - ./vol/django:/app
+    depends_on:
+      - db-one
+
+  front-end:
+    container_name: front-end
+    image: node:lts
+    working_dir: /app
+    command: "sh app-setup.sh"
+    volumes:
+      - ./vol/front-end:/app
+
+  db-one:
+    container_name: db-one
+    image: mysql:5.6.49
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: test1234
+      MYSQL_DATABASE: main_app
+      MYSQL_USER: user
+      MYSQL_PASSWORD: _user
+    ports:
+      - 3307:3306
+    volumes:
+      - db-volume:/var/lib/mysql
+
+volumes:
+  db-volume:
+    name: db-volume

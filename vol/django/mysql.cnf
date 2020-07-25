@@ -1,0 +1,7 @@
+# mysql.cnf
+[client]
+database = main_app
+host = db-one
+user = user
+password = _user
+default-character-set = utf8
