@@ -28,7 +28,8 @@ services:
     container_name: front-end
     image: node:lts
     working_dir: /app
-    command: "sh app-setup.sh"
+    # command: "sh app-setup.sh"
+    command: [ "/bin/bash", "-c", "--", "while true; do sleep 30; done;" ]
     volumes:
       - ./vol/front-end:/app
 
