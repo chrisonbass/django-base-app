@@ -7,8 +7,12 @@ This repo contians a set of services running with `docker-compose`.  The tech st
   - MySQL 
   - React front-end(TODO) 
 
-
 ## Getting Started
+### References Used
+I used the following sites to piece this together.  
+- [Django Project](https://www.djangoproject.com/start/)
+- [Django Rest Framework](https://www.django-rest-framework.org/)
+### Setup Instructions
 First, clone the repo and run the following command
 ```
 docker-compose up --build -d
@@ -65,4 +69,76 @@ vol/
     mysql.cnf   # mysql config used by django to connect to mysql container
 ```
 
-## Creating new table/endpoint
+## Creating new model/table/api-endpoint
+The `manage.py` file in our app root directory is also used to get `apps` started.  We can think of `apps` as a set of files describing models, serializers, and views.
+- Create new app
+
+  ```
+  python manage.py startapp tasks
+  ```
+  A new folder labelled `tasks` should be in the app root directory now.
+
+- Modify `tasks/models.py` file
+  ```
+  from django.db import models
+
+  class Task(models.Model):
+      name = models.CharField(max_length=250)
+      is_done = models.BooleanField(default=False)
+      last_modified = models.DateTimeField(auto_now=True)
+  ```
+- Create and Modify `tasks/serializers.py`
+  ```
+  from rest_framework import serializers
+  from tasks.models import Task
+
+  class TaskSerializer(serializers.HyperlinkedModelSerializer):
+      class Meta:
+          model = Task
+          fields = ['url', 'name', 'is_done', 'last_modified']
+  ```
+- Modify `tasks/views.py` file
+  ```
+  from rest_framework import viewsets
+  from tasks.serializers import TaskSerializer
+  from tasks.models import Task
+
+  class TaskViewSet(viewsets.ModelViewSet):
+      queryset = Task.objects.all()
+      serializer_class = TaskSerializer
+  ```
+- Now we need to add our new "App" to app settings.py file found in `basesite/settings.py`
+  ```
+  INSTALLED_APPS = [
+    ...,
+    'tasks',
+  ]
+  ```
+- Add new Api view to the `basesite/settings.py` file
+  ```
+  from tasks.views import TaskViewSet
+  ...
+  router.register(r'v1/tasks', TaskViewSet)
+  ```
+  
+- Create the migration for the new model
+  ```
+  python manage.py makemigrations
+  ```
+  That should output something like:
+  ```
+  Migrations for 'tasks':
+    tasks/migrations/0001_initial.py
+      - Create model Task
+  ```
+- Execute the migration
+  ```
+  python manage.py migrate
+  ```
+  You should see an output like:
+  ```
+  Operations to perform:
+    Apply all migrations: admin, auth, authtoken, contenttypes, sessions, shift_logs, tasks
+  Running migrations:
+    Applying tasks.0001_initial... OK
+  ```
