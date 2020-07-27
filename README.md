@@ -20,31 +20,31 @@ docker-compose up --build -d
 
 At this point, if you go to `http://localhost:8080/api` in your browser, you will get a gateway error.  We need to run a few commands to get the Django Rest Framework up and running.
 
-  - First, let's get connect to the Django container
+  - Connect to the Django container
 
     ```
     docker exec -it django /bin/bash
     ```
 
-  - Then, we need to setup of the data base
+  - Setup the database
 
     ```
     python manage.py migrate
     ```
 
-  - To login and test commands, we'll need to create a super user
+  - Create superuser to test api endpoints
 
     ```
     python manage.py createsuperuser --username admin --email admin@example.com
     ```
 
-  - Finally, we start the Django server on port 8000.  
+  - Finally, start the Django server on port 8000.  
 
     ```
     python manage.py runserver 0:8000
     ```
 
-    We have to write the ip and port as `0:8000` because Django tries to use the ip address `127.0.0.1` by default.  Which isn't visible to other containers in the docker-compose configuration.
+    The IP Address and port number need to be written as `0:8000` because Django tries to use the ip address `127.0.0.1` by default.  The server won't be visible to other containers if the 127.0.0.1 ip address is used.
 
 
 ## File Notes
