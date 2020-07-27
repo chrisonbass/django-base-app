@@ -107,25 +107,24 @@ The `manage.py` file in our app root directory is also used to get `apps` starte
       queryset = Task.objects.all()
       serializer_class = TaskSerializer
   ```
-- Now we need to add our new "App" to app settings.py file found in `basesite/settings.py`
+- Add new `tasks` app to the base settings file: `basesite/settings.py`
   ```
   INSTALLED_APPS = [
     ...,
     'tasks',
   ]
   ```
-- Add new Api view to the `basesite/settings.py` file
+- Add `TaskViewSet` API View to the `basesite/urls.py` file
   ```
   from tasks.views import TaskViewSet
   ...
   router.register(r'v1/tasks', TaskViewSet)
-  ```
-  
-- Create the migration for the new model
+  ```  
+- Create migration for the new model
   ```
   python manage.py makemigrations
   ```
-  That should output something like:
+  Command should output:
   ```
   Migrations for 'tasks':
     tasks/migrations/0001_initial.py
@@ -135,7 +134,7 @@ The `manage.py` file in our app root directory is also used to get `apps` starte
   ```
   python manage.py migrate
   ```
-  You should see an output like:
+  Command should output:
   ```
   Operations to perform:
     Apply all migrations: admin, auth, authtoken, contenttypes, sessions, shift_logs, tasks
